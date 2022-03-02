@@ -2,6 +2,8 @@
 
 echo "starting the installation"
 
+sudo sysctl -w vm.max_map_count=524288
+
 docker volume create sonarqube_data
 docker volume create sonarqube_extensions
 docker volume create sonarqube_logs
@@ -19,7 +21,6 @@ docker run -d --name sonardb \
 -v postgresql_data:/var/lib/postgresql/data \
 postgres:12.1-alpine
 
-
 docker run -d --name sonarqube \
 --network atnet -p 9000:9000 \
 -e SONARQUBE_JDBC_URL=jdbc:postgresql://sonardb:5432/sonar \
@@ -30,10 +31,10 @@ docker run -d --name sonarqube \
 -v sonarqube_logs:/opt/sonarqube/logs \
 sonarqube:8.9.0-community
 
-
 docker run -d --name sonarjenkins \
 --network atnet -p 8080:8080 -p 50000:50000 \
 -v jenkins_home:/var/jenkins_home \
 jenkins/jenkins:lts-jdk11
 
 echo "Installation finished"
+
